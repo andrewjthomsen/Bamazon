@@ -15,5 +15,9 @@
   "bugs": {
     "url": "https://github.com/andrewjthomsen/Bamazon/issues"
   },
-  "homepage": "https://github.com/andrewjthomsen/Bamazon#readme"
+  "homepage": "https://github.com/andrewjthomsen/Bamazon#readme",
+  "dependencies": {
+    "inquirer": "^6.2.2",
+    "mysql": "^2.16.0"
+  }
 }
