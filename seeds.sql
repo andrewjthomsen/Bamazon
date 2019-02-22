@@ -1,4 +1,4 @@
-
+use bamazon;
 INSERT INTO products   (item_id, product_name, department_name, price, stock_quantity)
 VALUES (1, "bananas", "produce", 5.99, 20 ); 
 
