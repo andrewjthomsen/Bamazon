@@ -1,3 +1,4 @@
+//Challenge level REQUIRED/ENTRY
 const inquirer = require("inquirer");
 const mysql = require("mysql");
 // connects to mysql
