@@ -45,44 +45,49 @@ function orderProducts() {
 
     .then(answers => {
       // Use user feedback for... whatever!!
-      console.log(answers);
+      console.log(answers.orderID);
       // Finds item in inventory
-      var requestedProduct = inventory.find(function(product.item_id) {// possible problem here--- 
-        //pluck item out and set it equal to requested product
-        // loop throw inventory to achieve this... START HERE
-        // console.log(product.item_id);
-        // console.log(product);
-        // return requestedProduct.item_id === parseInt(answers.orderID);
-        return requestedProduct;
+      getProduct(answers.orderID, function(requestedProduct) {
+        console.log(requestedProduct);
+        console.log(typeof (requestedProduct.stock_quantity));
+        var quantity = parseInt(answers.quantity);
+        if (requestedProduct === undefined) {
+          console.log(
+            "Sorry, that product doesn't exist right now. Please pick another product."
+          );
+        } else if (
+          // checks if there's anough inventory for order
+          requestedProduct.stock_quantity > quantity
+        ) {
+          // if enough is there, you have to update the data base through a sql query
+          // requestedProduct.quantity - parseInt(answers.quantity);
+          purchaseProduct(requestedProduct, quantity);
+        } else {
+          console.log("Sorry, insufficient quantity.");
+          orderProducts();
+        }
       });
-      console.log(requestedProduct);
-      if (requestedProduct === undefined) {
-        console.log(
-          "Sorry, that product doesn't exist right now. Please pick another product."
-        );
-      } else if (
-        // checks if there's anough inventory for order
-        requestedProduct.stock_quantity > parseInt(answers.quantity)
-      ) {
-        // if enough is there, you have to update the data base through a sql query
-        // requestedProduct.quantity - parseInt(answers.quantity);
-        purchaseProduct();
-      } else {
-        console.log("Sorry, insufficient quantity.");
-        orderProducts();
-      }
     });
-  var purchaseProduct = function(requestedProduct, quantity) {
-    connection.query(
-      "UPDATE products SET stock_quantity = stock_quantity - ? WHERE item_id =?",
-      [quantity, requestedProduct.item_id],
-      function(err, response) {
-        console.log("Purchase successful");
-        displayTable();
-      }
-    );
-  };
 }
+
+// Given the primary key of a product, query MySQL and return that product record.
+function getProduct(productID, callback) {
+  connection.query("SELECT * FROM products WHERE item_id = ?", [productID], function(error, results) {
+    if (error) throw error;
+    callback(results[0]);
+  }); 
+}
+
+function purchaseProduct(requestedProduct, quantity) {
+  connection.query(
+    "UPDATE products SET stock_quantity = stock_quantity - ? WHERE item_id =?",
+    [quantity, requestedProduct.item_id],
+    function(err, response) {
+      console.log("Purchase successful");
+      displayTable();
+    }
+  );
+};
 
 // displays table for user to view in command line
 function displayTable() {
