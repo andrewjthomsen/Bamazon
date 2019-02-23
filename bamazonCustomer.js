@@ -10,7 +10,7 @@ var connection = mysql.createConnection({
   database: "bamazon"
 });
 // if connection fails, error prompt
-connection.connect(function(err) {
+connection.connect(function (err) {
   if (err) {
     console.error("error connecting: " + err.stack);
     return;
@@ -20,7 +20,7 @@ connection.connect(function(err) {
 });
 // brings back data from mysql- loads database into application.
 function inventory() {
-  connection.query("SELECT * FROM products", function(err, response) {
+  connection.query("SELECT * FROM products", function (err, response) {
     if (err) throw err;
     console.table(response);
     orderProducts();
@@ -30,8 +30,7 @@ function inventory() {
 function orderProducts() {
   var inquirer = require("inquirer");
   inquirer
-    .prompt([
-      {
+    .prompt([{
         /* Pass your questions in here */
         name: "orderID",
         message: "What is the product ID that you'd like to order?",
@@ -48,7 +47,7 @@ function orderProducts() {
       // Use user feedback for... whatever!!
       console.log(answers.orderID);
       // Finds item in inventory
-      getProduct(answers.orderID, function(requestedProduct) {
+      getProduct(answers.orderID, function (requestedProduct) {
         console.log(requestedProduct);
         console.log(typeof (requestedProduct.stock_quantity));
         var quantity = parseInt(answers.quantity);
@@ -73,17 +72,17 @@ function orderProducts() {
 
 // Given the primary key of a product, query MySQL and return that product record.
 function getProduct(productID, callback) {
-  connection.query("SELECT * FROM products WHERE item_id = ?", [productID], function(error, results) {
+  connection.query("SELECT * FROM products WHERE item_id = ?", [productID], function (error, results) {
     if (error) throw error;
     callback(results[0]);
-  }); 
+  });
 }
 
 function purchaseProduct(requestedProduct, quantity) {
   connection.query(
     "UPDATE products SET stock_quantity = stock_quantity - ? WHERE item_id =?",
     [quantity, requestedProduct.item_id],
-    function(err, response) {
+    function (err, response) {
       console.log("Purchase successful");
       displayTable();
     }
@@ -92,7 +91,7 @@ function purchaseProduct(requestedProduct, quantity) {
 
 // displays table for user to view in command line
 function displayTable() {
-  connection.query("SELECT * FROM products", function(error, results) {
+  connection.query("SELECT * FROM products", function (error, results) {
     if (error) throw error;
     // connected!
     inventory = results;
