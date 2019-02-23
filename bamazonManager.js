@@ -10,7 +10,7 @@ var connection = mysql.createConnection({
   database: "bamazon"
 });
 // if connection fails, error prompt
-connection.connect(function(err) {
+connection.connect(function (err) {
   if (err) {
     console.error("error connecting: " + err.stack);
     return;
@@ -19,25 +19,23 @@ connection.connect(function(err) {
   console.log("connected as id " + connection.threadId);
   menuOptions();
 });
-var menuOptions = function() {
+var menuOptions = function () {
   var inquirer = require("inquirer");
   inquirer
-    .prompt([
-      {
-        /* Pass your questions in here */
-        name: "action",
-        message: "What would you like to do?",
-        type: "list",
-        choices: [
-          "View product for sale",
-          "View low inventory",
-          "Add to inventory",
-          "Add new product"
-        ]
-      }
-    ])
-
+    .prompt({
+      /* Pass your questions in here */
+      name: "action",
+      message: "What would you like to do?",
+      type: "list",
+      choices: [
+        "View product for sale",
+        "View low inventory",
+        "Add to inventory",
+        "Add new product"
+      ]
+    })
     .then(answers => {
+      console.log(answers)
       switch (answers.action) {
         case "View product for sale":
           viewProducts();
@@ -46,7 +44,7 @@ var menuOptions = function() {
           viewLowInventory();
           break;
         case "Add to inventory":
-           addToInventory();
+          addToInventory();
           break;
         case "Add new product":
           addNewProduct();
@@ -63,86 +61,89 @@ var menuOptions = function() {
 
     });
 };
+
 function viewProducts() {
-  connection.query("SELECT * FROM products", function(err, result) {
+  connection.query("SELECT * FROM products", function (err, result) {
     console.table(result);
+    menuOptions();
   });
 }
+
 function viewLowInventory() {
-  connection.query("SELECT * FROM products WHERE stock_quantity < 5 ", function(
+  connection.query("SELECT * FROM products WHERE stock_quantity < 5 ", function (
     err,
     result
   ) {
     console.table(result);
+    menuOptions();
   });
 }
-function addProduct() {
-  addProduct() = connection.query("UPDATE products SET stock_quantity = ?, WHERE item_id = ?",
-  [product.stock_quantity + quantity, product.item_id],
-  function(err, res) {
-    console.log("Congratulations manager! you have added more of an item to inventory.")
-  })
 
-} 
-function addNewProduct() {
-  addProduct() = connection.query("INSERT INTO products(product_name = ?, department_name = ?, price = ?, stock_quantity = ?"),
-  [answers.product_name, answers.department_name, answers.price, answers.quantity, product.item_id],
-  function(err, res) {
-    console.log("Congratulations manager! you have added a NEW ITEM to inventory.")
-  }
-} 
+function updateProduct(product) {
+  connection.query("UPDATE products SET stock_quantity = stock_quantity + ? WHERE item_id = ?",
+    [product.quantity, product.id],
+    function (err, res) {
+      if (err) throw err;
+      console.log("Congratulations manager! you have added more of an item to inventory.");
+      menuOptions();
+    }
+  );
+}
+
+function insertNewProduct(answers) {
+  connection.query("INSERT INTO products (product_name, department_name, price, stock_quantity) VALUES (?, ?, ?, ?)",
+    [answers.name, answers.department, answers.price, answers.quantity],
+    function (err, res) {
+      if (err) throw err;
+      console.log("Congratulations manager! you have added a NEW ITEM to inventory.");
+      menuOptions();
+    }
+  );
+}
+
 function addToInventory() {
   var inquirer = require("inquirer");
   inquirer
-    .prompt([
-      {
-        /* Pass your questions in here */
-        name: "product id",
-        message: "What is the product id of the item to be added?",
-        type: "input"
-    },{
+    .prompt([{
+      /* Pass your questions in here */
+      name: "id",
+      message: "What is the product id of the item to be added?",
+      type: "input"
+    }, {
       name: "quantity",
-      message:"What/'s the quantity of the item you'd like to add to inventory?",
-      type:"input"
-    }
-    ])
+      message: "What's the quantity of the item you'd like to add to inventory?",
+      type: "input"
+    }])
 
     .then(answers => {
-      addProduct(answers);
+      updateProduct(answers);
     });
 }
-function addNewProduct() {
+
+function addNewProduct () {
   var inquirer = require("inquirer");
   inquirer
-    .prompt([
-      {
-        /* Pass your questions in here */
-        name: "product id",
-        message: "What is the product id of the item to be added?",
-        type: "input"
-    },{
-      name:"department name",
-      message:"What/'s the name of the department?",
-      type:"input"
-    },{
-      name:"price",
-      message:"What is the price of the item?",
-      type:"input"
-    },{
+    .prompt([{
+      /* Pass your questions in here */
+      name: "name",
+      message: "What is the name of the product to be added?",
+      type: "input"
+    }, {
+      name: "department",
+      message: "What/'s the name of the department?",
+      type: "input"
+    }, {
+      name: "price",
+      message: "What is the price of the item?",
+      type: "input"
+    }, {
       name: "quantity",
-      message:"What/'s the quantity of the item you'd like to add to inventory?",
-      type:"input"
-    }
-    ])
+      message: "What/'s the quantity of the item you'd like to add to inventory?",
+      type: "input"
+    }])
 
     .then(answers => {
-   
-      addNewProduct(answers);
+      insertNewProduct(answers);
     });
 }
-//ISSUES TO RESOLVE
-//(node:2944) UnhandledPromiseRejectionWarning: RangeError: Maximum call stack size exceeded
-//at addProduct (C:\Users\rxfit\ucsd-coding-bootcamp\home-work\Coding\Bamazon\bamazonManager.js:95:26)
-
-//possibly linked to recurrsion of a funvtion in a function
-//
+//(node:3000) UnhandledPromiseRejectionWarning: RangeError: Maximum call stack size exceeded
