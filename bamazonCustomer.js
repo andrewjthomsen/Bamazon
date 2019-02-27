@@ -88,7 +88,9 @@ function purchaseProduct(requestedProduct, quantity) {
     }
   );
 };
-
+function productSales() {
+  
+}
 // displays table for user to view in command line
 function displayTable() {
   connection.query("SELECT * FROM products", function (error, results) {
