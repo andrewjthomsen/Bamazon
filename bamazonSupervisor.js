@@ -105,33 +105,36 @@ function CreateNewDep() {
                 name: "cost",
                 message: "What is the over-head cost?",
                 type: "input"
-            },{
+            }, {
                 name: "sales",
-                message: "What is the ?",
+                message: "What is the total product sales?",
                 type: "input"
-            },{
+            }, {
                 name: "profit",
-                message: "What is the ?",
+                message: "What is the total profit?",
                 type: "input"
             }
         ])
         .then(answers => {
             var newDepartment = answers.CreateNewDep;
             var cost = answers.cost;
+            var sales = answers.sales;
+            var profit = answers.profit;
             console.log(newDepartment);
             // - Function to send an INSERT query to "Create New Department"
             var createNew = function () {
                 connection.query(
-                    "INSERT INTO departments (department_name, over_head_costs) VALUES(?,?)",
-                    [newDepartment, cost],
+                    "INSERT INTO departments (department_name, over_head_costs, product_sales, total_profit) VALUES(?,?,?,?)",
+                    [newDepartment, cost, sales, profit],
                     function (err, res) {
                         if (err) throw err;
                         console.log(
-                            "Congratulations Supervisor! you have added a NEW DEPARTMENT."
+                            "Congratulations Supervisor! you have added a NEW DEPARTMENT!"
                         );
+                        menuOptions();
                     }
                 );
-                menuOptions();
+
             };
             createNew();
         });

@@ -1,7 +1,6 @@
-create database bamazon;
 
 USE bamazon;
-CREATE TABLE products(
+UPDATE products(
     item_id INTEGER(10) NOT NULL AUTO_INCREMENT,
     product_name VARCHAR(30) NOT NULL,
     department_id INTEGER(10) NOT NULL,
@@ -12,9 +11,11 @@ CREATE TABLE products(
     PRIMARY KEY (item_id)
 );
 
-CREATE TABLE departments (
+UPDATE departments (
     department_id INTEGER(10) NOT NULL AUTO_INCREMENT,
     department_name VARCHAR(30) NOT NULL,
     over_head_costs DECIMAL(10, 2) NOT NULL,
+    product_sales INTEGER(10) NOT NULL,
+	total_profit INTEGER NOT NULL,
     PRIMARY KEY (department_id)
 );
