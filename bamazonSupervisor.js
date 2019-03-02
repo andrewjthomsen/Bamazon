@@ -116,11 +116,12 @@ function CreateNewDep() {
             }
         ])
         .then(answers => {
-            var newDepartment = answers.CreateNewDep;
+            var newDepartment = answers.createNewDep;
             var cost = answers.cost;
             var sales = answers.sales;
             var profit = answers.profit;
-            console.log(newDepartment);
+            // console.log(newDepartment);
+            console.log(answers)
             // - Function to send an INSERT query to "Create New Department"
             var createNew = function () {
                 connection.query(
